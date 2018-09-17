@@ -52,7 +52,9 @@ class COCO2017_dataloader(Dataset):
                 image_id = image_info['id']
                 image_name = image_info['file_name']
                 _anno = {}
-                _anno['image_path'] = os.path.join(self.data_folder, 'images', 'train-valid2017', image_name)
+                #_anno['image_path'] = os.path.join(self.data_folder, 'images', 'train-valid2017', image_name)
+                _anno['image_path'] = os.path.join(self.data_folder, 'images', 'train2017', image_name)
+                
                 _anno['kps'] = []
                 _anno['box'] = []
                 assert not (image_id in image_id_to_info)

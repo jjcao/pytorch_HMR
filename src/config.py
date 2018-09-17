@@ -27,14 +27,14 @@ parser.add_argument(
 parser.add_argument(
     '--smpl-mean-theta-path', 
     type = str, 
-    default = 'E:/HMR/model/neutral_smpl_mean_params.h5', 
+    default = './model/neutral_smpl_mean_params.h5', 
     help = 'the path for mean smpl theta value'
 )
 
 parser.add_argument(
     '--smpl-model',
     type = str,
-    default = 'E:/HMR/model/neutral_smpl_with_cocoplus_reg.txt',
+    default = './model/neutral_smpl_with_cocoplus_reg.txt',
     help = 'smpl model path'
 )
 
@@ -203,7 +203,7 @@ parser.add_argument(
 parser.add_argument(
     '--save-folder',
     type = str,
-    default = 'E:/HMR/data_advanced/trained_model',
+    default = './data_advanced/trained_model',
     help = 'save model path'
 )
 
@@ -214,7 +214,9 @@ parser.add_argument(
     help = 'enable inter supervision or not.'
 )
 
-train_2d_set = ['coco', 'lsp', 'lsp_ext', 'ai-ch']
+train_2d_set = ['coco', 
+                #'lsp', 'lsp_ext', 'ai-ch'
+                ]
 train_3d_set = ['mpi-inf-3dhp', 'hum3.6m']
 train_adv_set = ['mosh']
 eval_set = ['up3d']
@@ -234,14 +236,14 @@ crop_size = {
 }
 
 data_set_path = {
-    'coco':'E:/HMR/data/COCO/',
-    'lsp':'E:/HMR/data/lsp',
-    'lsp_ext':'E:/HMR/data/lsp_ext',
-    'ai-ch':'E:/HMR/data/ai_challenger_keypoint_train_20170902',
-    'mpi-inf-3dhp':'E:/HMR/data/mpi_inf_3dhp',
-    'hum3.6m':'E:/HMR/data/human3.6m',
-    'mosh':'E:/HMR/data/mosh_gen',
-    'up3d':'E:/HMR/data/up3d_mpii'
+    'coco':'/Users/jjcao/data/COCO/',
+    #'lsp':'E:/HMR/data/lsp',
+    #'lsp_ext':'E:/HMR/data/lsp_ext',
+    #'ai-ch':'E:/HMR/data/ai_challenger_keypoint_train_20170902',
+    #'mpi-inf-3dhp':'E:/HMR/data/mpi_inf_3dhp',
+    #'hum3.6m':'E:/HMR/data/human3.6m',
+    #'mosh':'E:/HMR/data/mosh_gen',
+    #'up3d':'E:/HMR/data/up3d_mpii'
 }
 
 pre_trained_model = {

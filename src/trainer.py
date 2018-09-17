@@ -38,15 +38,18 @@ class HMRTrainer(object):
         self.normalize = True
         self.flip_prob = 0.5
         self.use_flip = False
-        self.w_smpl = torch.ones((config.args.eval_batch_size)).float().cuda()
+        if torch.cuda.is_available():
+            self.w_smpl = torch.ones((config.args.eval_batch_size)).float().cuda()
+        else:
+            self.w_smpl = torch.ones((config.args.eval_batch_size)).float()
 
         self._build_model()
         self._create_data_loader()
 
     def _create_data_loader(self):
         self.loader_2d = self._create_2d_data_loader(config.train_2d_set)
-        self.loader_mosh = self._create_adv_data_loader(config.train_adv_set)
-        self.loader_3d = self._create_3d_data_loader(config.train_3d_set)
+        #self.loader_mosh = self._create_adv_data_loader(config.train_adv_set)
+        #self.loader_3d = self._create_3d_data_loader(config.train_3d_set)
         
     def _build_model(self):
         print('start building modle.')
@@ -76,8 +79,12 @@ class HMRTrainer(object):
         else:
             print('model {} not exist!'.format(model_path))
 
-        self.generator = nn.DataParallel(generator).cuda()
-        self.discriminator = nn.DataParallel(discriminator).cuda()
+        if torch.cuda.is_available():
+            self.generator = nn.DataParallel(generator).cuda()
+            self.discriminator = nn.DataParallel(discriminator).cuda()
+        else:
+            self.generator = nn.DataParallel(generator)
+            self.discriminator = nn.DataParallel(discriminator)
         
         self.e_opt = torch.optim.Adam(
             self.generator.parameters(),
