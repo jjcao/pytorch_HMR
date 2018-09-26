@@ -74,7 +74,12 @@ def batch_global_rigid_transformation(Rs, Js, parent, rotate_base = False):
     if rotate_base:
         np_rot_x = np.array([[1, 0, 0], [0, -1, 0], [0, 0, -1]], dtype = np.float)
         np_rot_x = np.reshape(np.tile(np_rot_x, [N, 1]), [N, 3, 3])
-        rot_x = Variable(torch.from_numpy(np_rot_x).float()).cuda()
+
+        if Rs.is_cuda:
+            rot_x = Variable(torch.from_numpy(np_rot_x).float()).cuda()
+        else:
+            rot_x = Variable(torch.from_numpy(np_rot_x).float())
+
         root_rotation = torch.matmul(Rs[:, 0, :, :],  rot_x)
     else:
         root_rotation = Rs[:, 0, :, :]
@@ -82,7 +87,11 @@ def batch_global_rigid_transformation(Rs, Js, parent, rotate_base = False):
 
     def make_A(R, t):
         R_homo = F.pad(R, [0, 0, 0, 1, 0, 0])
-        t_homo = torch.cat([t, Variable(torch.ones(N, 1, 1)).cuda()], dim = 1)
+        if t.is_cuda:
+            t_homo = torch.cat([t, Variable(torch.ones(N, 1, 1)).cuda()], dim = 1)
+        else:
+            t_homo = torch.cat([t, Variable(torch.ones(N, 1, 1))], dim = 1)
+            
         return torch.cat([R_homo, t_homo], 2)
     
     A0 = make_A(root_rotation, Js[:, 0])
@@ -97,7 +106,11 @@ def batch_global_rigid_transformation(Rs, Js, parent, rotate_base = False):
     results = torch.stack(results, dim = 1)
 
     new_J = results[:, :, :3, 3]
-    Js_w0 = torch.cat([Js, Variable(torch.zeros(N, 24, 1, 1)).cuda()], dim = 2)
+    if Js.is_cuda:
+        Js_w0 = torch.cat([Js, Variable(torch.zeros(N, 24, 1, 1)).cuda()], dim = 2)
+    else:
+        Js_w0 = torch.cat([Js, Variable(torch.zeros(N, 24, 1, 1))], dim = 2)
+        
     init_bone = torch.matmul(results, Js_w0)
     init_bone = F.pad(init_bone, [3, 0, 0, 0, 0, 0, 0, 0])
     A = results - init_bone

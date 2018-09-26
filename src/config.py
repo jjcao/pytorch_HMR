@@ -217,7 +217,9 @@ parser.add_argument(
 train_2d_set = ['coco', 
                 #'lsp', 'lsp_ext', 'ai-ch'
                 ]
-train_3d_set = ['mpi-inf-3dhp', 'hum3.6m']
+train_3d_set = ['mpi-inf-3dhp', 
+                #'hum3.6m'
+                ]
 train_adv_set = ['mosh']
 eval_set = ['up3d']
 
@@ -240,9 +242,9 @@ data_set_path = {
     #'lsp':'E:/HMR/data/lsp',
     #'lsp_ext':'E:/HMR/data/lsp_ext',
     #'ai-ch':'E:/HMR/data/ai_challenger_keypoint_train_20170902',
-    #'mpi-inf-3dhp':'E:/HMR/data/mpi_inf_3dhp',
+    'mpi-inf-3dhp':'/Users/jjcao/data/mpii_inf_3dhp',
     #'hum3.6m':'E:/HMR/data/human3.6m',
-    #'mosh':'E:/HMR/data/mosh_gen',
+    'mosh':'/Users/jjcao/data/mosh_gen',
     #'up3d':'E:/HMR/data/up3d_mpii'
 }
 

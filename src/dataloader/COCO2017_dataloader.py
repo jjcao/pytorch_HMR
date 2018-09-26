@@ -43,7 +43,9 @@ class COCO2017_dataloader(Dataset):
         self.boxs   = []
         clk = Clock()
         print('start loading coco 2017 dataset.')
-        anno_file_path = os.path.join(self.data_folder, 'annotations', 'person_keypoints_train2017.json')
+        #anno_file_path = os.path.join(self.data_folder, 'annotations', 'person_keypoints_train2017.json')
+        anno_file_path = os.path.join(self.data_folder, 'annotations', 'person_keypoints_val2017.json')
+        
         with open(anno_file_path, 'r') as reader:
             anno = json.load(reader)
         
@@ -53,7 +55,8 @@ class COCO2017_dataloader(Dataset):
                 image_name = image_info['file_name']
                 _anno = {}
                 #_anno['image_path'] = os.path.join(self.data_folder, 'images', 'train-valid2017', image_name)
-                _anno['image_path'] = os.path.join(self.data_folder, 'images', 'train2017', image_name)
+                #_anno['image_path'] = os.path.join(self.data_folder, 'images', 'train2017', image_name)
+                _anno['image_path'] = os.path.join(self.data_folder, 'images', 'val2017', image_name)
                 
                 _anno['kps'] = []
                 _anno['box'] = []

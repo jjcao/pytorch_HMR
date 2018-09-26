@@ -48,8 +48,8 @@ class HMRTrainer(object):
 
     def _create_data_loader(self):
         self.loader_2d = self._create_2d_data_loader(config.train_2d_set)
-        #self.loader_mosh = self._create_adv_data_loader(config.train_adv_set)
-        #self.loader_3d = self._create_3d_data_loader(config.train_3d_set)
+        self.loader_mosh = self._create_adv_data_loader(config.train_adv_set)
+        self.loader_3d = self._create_3d_data_loader(config.train_3d_set)
         
     def _build_model(self):
         print('start building modle.')
@@ -327,7 +327,10 @@ class HMRTrainer(object):
             
             image_from_2d, image_from_3d = data_2d['image'], data_3d['image']            
             sample_2d_count, sample_3d_count, sample_mosh_count = image_from_2d.shape[0], image_from_3d.shape[0], data_mosh['theta'].shape[0]
-            images = torch.cat((image_from_2d, image_from_3d), dim = 0).cuda()
+            if torch.cuda.is_available():
+                images = torch.cat((image_from_2d, image_from_3d), dim = 0).cuda()
+            else:
+                images = torch.cat((image_from_2d, image_from_3d), dim = 0)
 
             generator_outputs = self.generator(images)
 
@@ -387,12 +390,18 @@ class HMRTrainer(object):
             return torch.cat(thetas, 0)
 
         sample_2d_count, sample_3d_count, sample_mosh_count = data_2d['kp_2d'].shape[0], data_3d['kp_2d'].shape[0], data_mosh['theta'].shape
-        data_3d_theta, w_3d, w_smpl = data_3d['theta'].cuda(), data_3d['w_3d'].float().cuda(), data_3d['w_smpl'].float().cuda()
+        if torch.cuda.is_available():
+            data_3d_theta, w_3d, w_smpl = data_3d['theta'].cuda(), data_3d['w_3d'].float().cuda(), data_3d['w_smpl'].float().cuda()
+        else:
+            data_3d_theta, w_3d, w_smpl = data_3d['theta'], data_3d['w_3d'].float(), data_3d['w_smpl'].float()
 
         total_predict_thetas = _accumulate_thetas(generator_outputs)
         (predict_theta, predict_verts, predict_j2d, predict_j3d, predict_Rs) = generator_outputs[-1]
 
-        real_2d, real_3d = torch.cat((data_2d['kp_2d'], data_3d['kp_2d']), 0).cuda(), data_3d['kp_3d'].float().cuda()
+        if torch.cuda.is_available():
+            real_2d, real_3d = torch.cat((data_2d['kp_2d'], data_3d['kp_2d']), 0).cuda(), data_3d['kp_3d'].float().cuda()
+        else:
+            real_2d, real_3d = torch.cat((data_2d['kp_2d'], data_3d['kp_2d']), 0).cuda(), data_3d['kp_3d'].float().cuda()
         predict_j2d, predict_j3d, predict_theta = predict_j2d, predict_j3d[sample_2d_count:, :], predict_theta[sample_2d_count:, :]
 
         loss_kp_2d = self.batch_kp_2d_l1_loss(real_2d, predict_j2d[:,:14,:]) *  args.e_loss_weight
@@ -406,7 +415,10 @@ class HMRTrainer(object):
 
         e_disc_loss = self.batch_encoder_disc_l2_loss(self.discriminator(total_predict_thetas)) * args.d_loss_weight * args.d_disc_ratio
         
-        mosh_real_thetas = data_mosh['theta'].cuda()
+        if torch.cuda.is_available():
+            mosh_real_thetas = data_mosh['theta'].cuda()
+        else:
+            mosh_real_thetas = data_mosh['theta']
         fake_thetas = total_predict_thetas.detach()
         fake_disc_value, real_disc_value = self.discriminator(fake_thetas), self.discriminator(mosh_real_thetas)
         d_disc_real, d_disc_fake, d_disc_loss = self.batch_adv_disc_l2_loss(real_disc_value, fake_disc_value)
