@@ -4,3 +4,5 @@
 model/neutral_smpl_with_cocoplus_reg.txt
 model/MobileNet_V2.py
 model.zip
+
+\.DS_Store
